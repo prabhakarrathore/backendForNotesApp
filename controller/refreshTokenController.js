@@ -5,7 +5,7 @@ const handleRefreshToken = async (req, res) => {
     const cookies = req.cookies;
     if (!cookies?.jwt) return res.sendStatus(401);
     const refreshToken = cookies.jwt;
-    res.clearCookie('jwt', { httpOnly: true, sameSite: "None", secure: true });
+    res.clearCookie('jwt1', { httpOnly: true, sameSite: "None", secure: true })
 
     const foundUser = await User.findOne({ refreshToken }).exec();
     if (!foundUser) {
@@ -42,7 +42,7 @@ const handleRefreshToken = async (req, res) => {
                     }
                 },
                 process.env.ACCESS_TOKEN_SECRET,
-                { expiresIn: '15m' }
+                { expiresIn: '15s' }
             );
             const newrefreshToken = jwt.sign(
                 { "username": foundUser.username },
@@ -53,7 +53,7 @@ const handleRefreshToken = async (req, res) => {
             foundUser.refreshToken = [...newRefreshTokenArray, newrefreshToken];
             await foundUser.save();
             res.cookie('jwt', newrefreshToken, { httpOnly: true, sameSite: 'None', secure: true, maxAge: 24 * 60 * 60 * 1000 });
-            res.json({ accessToken })
+            res.json({ accessToken})
         }
     );
 }
