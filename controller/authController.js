@@ -43,14 +43,14 @@ const handleLogin = async (req, res) => {
                 if (!foundToken) {
                     newRefreshTokenArray = [];
                 }
-                res.clearCookie('jwt', { httpOnly: true, sameSite: 'lax', secure: true });
+                res.clearCookie('jwt', { httpOnly: true, sameSite: 'none', secure: true });
             }
 
             // Saving refreshToken with current user
             foundUser.refreshToken = [...newRefreshTokenArray, newRefreshToken];
             await foundUser.save();
 
-            res.cookie('jwt', newRefreshToken, { httpOnly: true, sameSite: 'lax', secure: true, maxAge: 24 * 60 * 60 * 1000 });
+            res.cookie('jwt', newRefreshToken, { httpOnly: true, sameSite: 'none', secure: true, maxAge: 24 * 60 * 60 * 1000 });
             res.json({ accessToken });
         } else {
             res.sendStatus(401); // Unauthorized
